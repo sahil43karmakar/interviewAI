@@ -6,7 +6,7 @@ import { analyzeResume, finishInterview, generateQuestion, getInterviewReport, g
 
 
 
-const interviewRouter = express.Router()
+export const interviewRouter = express.Router()
 
 interviewRouter.post("/resume",isAuth,upload.single("resume"),analyzeResume)
 interviewRouter.post("/generate-questions",isAuth,generateQuestion)
@@ -18,4 +18,4 @@ interviewRouter.get("/report/:id",isAuth,getInterviewReport)
 
 
 
-export default interviewRouter
+export default interviewRouter;
