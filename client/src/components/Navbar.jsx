@@ -20,16 +20,34 @@ function Navbar() {
 
     const handleLogout = async () => {
         try {
-            await axios.get(ServerUrl + "/api/auth/logout" , {withCredentials:true})
-            dispatch(setUserData(null))
-            setShowCreditPopup(false)
-            setShowUserPopup(false)
-            navigate("/")
-
+            console.log("Logging out...");
+            
+            // Call server logout endpoint
+            await axios.get(ServerUrl + "/api/auth/logout", { withCredentials: true });
+            
+            console.log("Server logout successful");
+            
+            // Clear Redux state
+            dispatch(setUserData(null));
+            
+            // Close any open popups
+            setShowCreditPopup(false);
+            setShowUserPopup(false);
+            
+            // Navigate to home
+            navigate("/");
+            
+            console.log("Logout complete");
+            
         } catch (error) {
-            console.log(error)
+            console.error("Logout error:", error);
+            // Still clear local state even if server call fails
+            dispatch(setUserData(null));
+            setShowCreditPopup(false);
+            setShowUserPopup(false);
+            navigate("/");
         }
-    }
+    };
   return (
     <div className='bg-[#f8f9fa] flex justify-center px-4 pt-6'>
         <motion.div 
