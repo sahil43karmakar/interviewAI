@@ -14,25 +14,48 @@ function Auth({isModel = false}) {
 
     const handleGoogleAuth = async () => {
   try {
+    // Clear any pending auth events first
+    await auth.signOut().catch(() => {});
+    
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
     const name = user.displayName;
     const email = user.email;
+    const uid = user.uid;
+
+    console.log("Firebase auth successful for:", email);
 
     const response = await axios.post(
       ServerUrl + "/api/auth/google-auth",
-      { name, email },
-      { withCredentials: true }
+      { name, email, uid },
+      { 
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
     );
 
+    console.log("Server auth successful");
     dispatch(setUserData(response.data));
-    console.log("Login successful");
     
-    // Redirect to home page after successful login
-    window.location.href = "/";
+    // Small delay before redirect
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 500);
 
   } catch (error) {
-    console.error("Google auth error:", error);
+    console.error("Google auth error:", error.code, error.message);
+    
+    // Handle specific Firebase errors
+    if (error.code === 'auth/popup-blocked') {
+      alert('Popup was blocked by the browser. Please allow popups for this site.');
+    } else if (error.code === 'auth/cancelled-popup-request') {
+      console.log('User cancelled the popup');
+    } else if (error.code === 'auth/network-request-failed') {
+      alert('Network error. Please check your internet connection.');
+    }
+    
     dispatch(setUserData(null));
   }
 };
