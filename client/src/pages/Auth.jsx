@@ -12,26 +12,27 @@ import { setUserData } from '../redux/userSlice';
 function Auth({isModel = false}) {
     const dispatch = useDispatch()
 
-      const handleGoogleAuth = async () => {
+    const handleGoogleAuth = async () => {
   try {
-    const response = await signInWithPopup(auth, provider);
-
-    const user = response.user;
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
     const name = user.displayName;
     const email = user.email;
 
-    const result = await axios.post(
-      ServerUrl + "/api/user/google-auth", // ✅ correct route
+    const response = await axios.post(
+      ServerUrl + "/api/auth/google-auth",
       { name, email },
       { withCredentials: true }
     );
 
-    dispatch(setUserData(result.data));
-
-    console.log("Login success");
+    dispatch(setUserData(response.data));
+    console.log("Login successful");
+    
+    // Redirect to home page after successful login
+    window.location.href = "/";
 
   } catch (error) {
-    console.log(error);
+    console.error("Google auth error:", error);
     dispatch(setUserData(null));
   }
 };
