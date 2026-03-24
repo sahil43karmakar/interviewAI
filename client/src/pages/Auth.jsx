@@ -21,7 +21,7 @@ function Auth({isModel = false}) {
     const email = user.email;
 
     const result = await axios.post(
-      ServerUrl + "/api/user/google", // ✅ correct route
+      ServerUrl + "/api/user/google-auth", // ✅ correct route
       { name, email },
       { withCredentials: true }
     );
